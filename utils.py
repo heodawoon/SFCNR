@@ -1,10 +1,7 @@
-from __future__ import print_function
-
 import random
+import numpy as np
 
 import torch
-from torch import nn
-from torch.utils.data import Dataset
 import torch.nn.functional as F
 
 # Define the function to print and write log
