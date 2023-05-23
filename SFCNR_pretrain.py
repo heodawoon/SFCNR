@@ -100,15 +100,14 @@ elif args.opt_type == 'adam':
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.3)
 
 
-def training(epoch, train_dataloader):
-
+def training(epoch, dataloader):
     # Training
     model.train()
 
     train_loss = 0
     train_mae = 0
 
-    for batch, input_data in enumerate(tqdm(train_dataloader)):
+    for batch, input_data in enumerate(tqdm(dataloader)):
         optimizer.zero_grad()  # reset gradient
         _, input_img, input_age = input_data
         bs = input_img.shape[0]
@@ -136,15 +135,15 @@ def training(epoch, train_dataloader):
     scheduler.step()
 
     # calculate mean for each epoch
-    Train_Loss = train_loss / len(train_dataloader)
-    Train_MAE = train_mae / len(train_dataloader)
+    Train_Loss = train_loss / len(dataloader)
+    Train_MAE = train_mae / len(dataloader)
 
     print("Train Loss: {:.3f}".format(Train_Loss),
           "Train MAE: {:.3f}".format(Train_MAE))
-    writer.add_scalar('/Train/loss', (train_loss / len(train_dataloader)), global_step=epoch)
-    writer.add_scalar('/Train/MAE', (train_mae / len(train_dataloader)), global_step=epoch)
+    writer.add_scalar('/Train/loss', (train_loss / len(dataloader)), global_step=epoch)
+    writer.add_scalar('/Train/MAE', (train_mae / len(dataloader)), global_step=epoch)
 
-def evaluation(epoch, phase, valid_dataloader):
+def evaluation(epoch, phase, dataloader):
 
     # Validation
     model.eval()
@@ -153,7 +152,7 @@ def evaluation(epoch, phase, valid_dataloader):
 
     # validation loop
     with torch.no_grad():
-        for i, data in enumerate(tqdm(valid_dataloader)):
+        for i, data in enumerate(tqdm(dataloader)):
             images, labels = data
             val_bs = images.shape[0]
             images = Variable(images).cuda()
@@ -173,15 +172,15 @@ def evaluation(epoch, phase, valid_dataloader):
             valid_mae += MAE_valid
 
     # calculate mean for each epoch
-    Valid_Loss = valid_loss / len(valid_dataloader)
-    Valid_MAE = valid_mae / len(valid_dataloader)
+    Valid_Loss = valid_loss / len(dataloader)
+    Valid_MAE = valid_mae / len(dataloader)
 
     print(phase + " Loss: {:.3f}".format(Valid_Loss),
           phase + " MAE: {:.3f}".format(Valid_MAE), )
-    writer.add_scalar('/' + phase + '/loss', (valid_loss / len(valid_dataloader)), global_step=epoch)
-    writer.add_scalar('/' + phase + '/MAE', (valid_mae / len(valid_dataloader)), global_step=epoch)
+    writer.add_scalar('/' + phase + '/loss', (valid_loss / len(dataloader)), global_step=epoch)
+    writer.add_scalar('/' + phase + '/MAE', (valid_mae / len(dataloader)), global_step=epoch)
 
-    return valid_loss, valid_mae
+    return Valid_Loss, Valid_MAE
 
 
 
@@ -191,12 +190,12 @@ for epoch in range(args.epoch):
     training(epoch, dataloaders['train'])
     valid_loss, valid_mae = evaluation(epoch, 'Valid', dataloaders['valid'])
 
-    if min_loss > (valid_loss / len(valid_dataloader)):
-        print('Loss Decreasing.. {:.3f} >> {:.3f} '.format(min_loss, (valid_loss / len(valid_dataloader))))
-        min_loss = (valid_loss / len(valid_dataloader))
+    if min_loss > valid_loss:
+        print('Loss Decreasing.. {:.3f} >> {:.3f} '.format(min_loss, valid_loss))
+        min_loss = valid_loss
         print('saveing model...')
         torch.save(model.state_dict(),
-                   model_dir + '/SFCNR_MAE_{:.3f}_epoch_{}.pt'.format((valid_mae / len(valid_dataloader)), epoch))
+                   model_dir + '/SFCNR_MAE_{:.3f}_epoch_{}.pt'.format(valid_mae, epoch))
         not_improve = 0
     else:
         not_improve += 1
