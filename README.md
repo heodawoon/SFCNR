@@ -9,6 +9,10 @@ We utilized SFCN [1], the network proposed for brain age prediction, for a backb
 - Peng, H. et al., (2021). UKBiobank_deep_pretrain [Source code]. GitHub. https://github.com/ha-ha-ha-han/UKBiobank_deep_pretrain
 
 
+## Overall Network
+![image](https://github.com/heodawoon/SFCNR/assets/46319358/f9100edb-9f79-4d6e-8866-a9daa2846789)
+
+
 ## Data
 The data used for pretraining was sourced from the UK Biobank [2], which is available at https://www.ukbiobank.ac.uk/. Out of a total database comprising 49,123 T1 structural brain scans, we used the first-visit imaging datasets of healthy subjects. In addition, we randomly picked 130 subjects from each year between 42 and 82 to maintain an even age distribution across the sample. This approach resulted in an overall selection of 7,590 data. These data were subsequently divided into training, validation, and testing sets by 8:1:1 ratio.
 
