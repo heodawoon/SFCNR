@@ -30,5 +30,5 @@ python ./SFCNR_finetune.py --gpu_id 0
 ```
 
 ## References
-[1] Peng et al., "Accurate brain age prediction with lightweight deep neural networks," Medical image analysis 68: 101871, 2021.
+[1] Peng et al., "Accurate brain age prediction with lightweight deep neural networks," Medical image analysis 68: 101871, 2021.\
 [2] Sudlow et al., "UK biobank: an open access resource for identifying the causes of a wide range of complex diseases of middle and old age," PLoS medicine 12.3: e1001779, 2015.
