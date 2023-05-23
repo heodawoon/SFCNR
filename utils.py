@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import os
 import random
 
 import torch
@@ -8,21 +7,10 @@ from torch import nn
 from torch.utils.data import Dataset
 import torch.nn.functional as F
 
-import numpy as np
-
-import nibabel as nib
-
-try:  # SciPy >= 0.19
-    from scipy.special import comb
-except ImportError:
-    from scipy.misc import comb
-
-
 # Define the function to print and write log
 def writelog(file, line):
     file.write(line + '\n')
     print(line)
-
 
 # Augmentation: sagittal flip
 def sagittal_flip(x):
@@ -32,17 +20,13 @@ def sagittal_flip(x):
         x = x
     return x
 
-
 # Augmentation: crop
 def random_crop(x):
-
     sx = random.randint(0, 3)
     sy = random.randint(0, 3)
     sz = random.randint(0, 3)
     x = x[sx:, sy:, sz:]
-
     return x
-
 
 # To match size after crop
 # cropping + padding = shifting voxels
