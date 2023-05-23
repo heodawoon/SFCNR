@@ -9,7 +9,7 @@ We utilized SFCN [1], the network proposed for brain age prediction, for a backb
 - Peng, H. et al., (2021). UKBiobank_deep_pretrain [Source code]. GitHub. https://github.com/ha-ha-ha-han/UKBiobank_deep_pretrain
 
 
-## Overall Network
+## Overall Framework
 ![image](https://github.com/heodawoon/SFCNR/assets/46319358/f9100edb-9f79-4d6e-8866-a9daa2846789)
 
 
