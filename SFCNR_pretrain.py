@@ -97,7 +97,7 @@ elif args.opt_type == 'adam':
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.3)
 
 
-def training(epoch, dataloader):
+def training(dataloader, epoch):
     # Training
     model.train()
 
@@ -141,7 +141,7 @@ def training(epoch, dataloader):
     writer.add_scalar('/Train/MAE', (train_mae / len(dataloader)), global_step=epoch)
 
     
-def evaluation(epoch, phase, dataloader):
+def evaluation(phase, dataloader, epoch):
     # Validation
     model.eval()
     valid_loss = 0
@@ -180,18 +180,25 @@ def evaluation(epoch, phase, dataloader):
     return Valid_Loss, Valid_MAE
 
 
-min_loss = np.inf
+# Best epoch checking
+valid = {
+    'epoch': 0,
+    'loss': np.Inf,
+    'mae': np.Inf
+}
+
 not_improve = 0
 for epoch in range(args.epoch):
-    training(epoch, dataloaders['train'])
-    valid_loss, valid_mae = evaluation(epoch, 'Valid', dataloaders['valid'])
+    training(dataloaders['train'], epoch)
+    valid_loss, valid_mae = evaluate('Valid', dataloaders['valid'], epoch)
 
-    if min_loss > valid_loss:
-        print('Loss Decreasing.. {:.3f} >> {:.3f} '.format(min_loss, valid_loss))
-        min_loss = valid_loss
+    if valid_loss < valid['loss']:
+        print('Loss Decreasing.. {:.3f} >> {:.3f} '.format(valid['loss'], valid_loss))
         print('saveing model...')
         torch.save(model.state_dict(),
                    model_dir + '/SFCNR_MAE_{:.3f}_epoch_{}.pt'.format(valid_mae, epoch))
+        valid['loss'] = valid_loss
+        valid['mae'] = valid_mae
         not_improve = 0
     else:
         not_improve += 1
