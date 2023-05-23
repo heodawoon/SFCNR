@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore')
 import torch.backends.cudnn as cudnn
 
 from utils import writelog
-from SFCN_model import SFCNR
+from SFCNR_model import SFCNR
 from dataloaders import Finetune_dataset
 
 
@@ -35,7 +35,7 @@ cudnn.deterministic = True
 random.seed(0)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--gpu_id', type=str, default="0")
+parser.add_argument('--gpu_id', type=str, default="4")
 parser.add_argument('--outer_fold', type=int, default=1)
 parser.add_argument('--inner_fold', type=int, default=1)
 parser.add_argument('--batch_size', type=int, default=16)
@@ -49,9 +49,7 @@ args = parser.parse_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-checkpoint_pth = './SFCNR_MAE_2.623_epoch_77.pt'
-#checkpoint_pth = '/DataCommon3/daheo/JBUH/result/Ageprediction/pretrain/20220923.22.10.20_regress_age_norm_epoch_300_bsize_8_opt_type_sgd_lr_0.01_wdecay_0.001_output_dim_1_earlystop_30/model/SFCN_MAE_2.623_epoch_77.pt'
-
+checkpoint_pth = './bestmodel.pt'
 date_str = str(datetime.datetime.now().strftime('%Y%m%d.%H.%M.%S'))
 directory = os.path.join('./finetuning', 'Outer_Fold'+str(args.outer_fold),
                          'Inner_Fold'+str(args.inner_fold), 'Batch_size_'+str(args.batch_size), 'Optype_'+args.optype, 'lr'+str(args.finelr),
@@ -94,16 +92,10 @@ f = open(os.path.join(directory, 'log.log'), 'a')
 writer = SummaryWriter(log_pth)
 
 # Load Dataset
-path_train_images = './Dataset/Combat_MNI_space/After_combat/HC_tr_combat_nii'
-# path_valid_images = './Combat_MNI_space/After_combat/HC_tr_combat_nii'
-# path_test_images = './Combat_MNI_space/After_combat/HC_te_combat_nii'
+path_images = './Dataset/Combat_MNI_space/After_combat/HC_combat_nii'
 
-#path_train_images = '/DataCommon3/daheo/JBUH/Dataset/Combat_MNI_space/After_combat/HC_tr_combat_nii'
-# path_valid_images = '/DataCommon3/daheo/JBUH/Dataset/Combat_MNI_space/After_combat/HC_tr_combat_nii'
-# path_test_images = '/DataCommon3/daheo/JBUH/Dataset/Combat_MNI_space/After_combat/HC_te_combat_nii'
-
-outer_index_folder_pth = os.path.join('/DataCommon3/daheo/JBUH/Dataset/Combat_MNI_space/After_combat/InnerLoop_NestedCV_Folds_new_221007', 'Outer_Fold'+str(args.outer_fold))
-inner_index_folder_pth = os.path.join('/DataCommon3/daheo/JBUH/Dataset/Combat_MNI_space/After_combat/InnerLoop_NestedCV_Folds_new_221007',
+outer_index_folder_pth = os.path.join('./Dataset/Combat_MNI_space/After_combat/InnerLoop_NestedCV_Folds', 'Outer_Fold'+str(args.outer_fold))
+inner_index_folder_pth = os.path.join('./Dataset/Combat_MNI_space/After_combat/InnerLoop_NestedCV_Folds',
                                       'Outer_Fold'+str(args.outer_fold), 'Inner_Fold'+str(args.inner_fold))
 
 inner_tr_id_age = np.load(os.path.join(inner_index_folder_pth, 'Out_Fold'+str(args.outer_fold)+'_In_Fold'+str(args.inner_fold)+'_train.npz'))
@@ -121,17 +113,16 @@ std_age_ = inner_tr_age.std()
 inner_val_id = inner_val_id_age['ID']
 inner_val_age = inner_val_id_age['Age']
 
-
 tr_img_path = []
 tr_age = []
 for fidx in range(len(inner_tr_id)):
-    tr_img_path.append(os.path.join(path_tr_images, inner_tr_id[fidx] + '_flirt_restore.nii.gz'))
+    tr_img_path.append(os.path.join(path_images, inner_tr_id[fidx] + '_flirt_restore.nii.gz'))
     tr_age.append(inner_tr_age[fidx])
 
 val_img_path = []
 val_age = []
 for fidx in range(len(inner_val_id)):
-    val_img_path.append(os.path.join(path_tr_images, inner_val_id[fidx] + '_flirt_restore.nii.gz'))
+    val_img_path.append(os.path.join(path_images, inner_val_id[fidx] + '_flirt_restore.nii.gz'))
     val_age.append(inner_val_age[fidx])
 
 # Define Loaders
@@ -141,8 +132,7 @@ validloader = Finetune_dataset(val_img_path, crop_size=(91, 109, 91), age_info=v
 val_dataloader = DataLoader(validloader, batch_size=args.batch_size, shuffle=False, drop_last=False)
 
 dataloaders = {'train': tr_dataloader,
-               'valid': val_dataloader
-               }
+               'valid': val_dataloader}
 
 # Initialize Generator and Discriminator
 model = SFCNR().to(device)
@@ -158,12 +148,8 @@ elif args.optype == 'sgd':
 # Loss function
 mae_loss = nn.L1Loss().cuda()
 
-def age_MAE(preds, targets):
-    running_mae = torch.abs(preds - targets).sum().data
-    return running_mae
-
 # TRAIN function
-def train(dataloader, epoch, dir='.'):
+def train(dataloader, epoch):
     model.train()
     train_loss = 0
     train_mae = 0.0
@@ -190,7 +176,7 @@ def train(dataloader, epoch, dir='.'):
 
         # evaluation metrics
         output_x = (output.squeeze() * torch.Tensor(np.tile(std_age_, output.squeeze().shape)).to(device)) + torch.Tensor(np.tile(mean_age_, output.squeeze().shape)).to(device)
-        MAE_train = age_MAE(output_x.squeeze(), input_age.to(device))
+        MAE_train = torch.abs(output_x.squeeze() - input_age.to(device)).sum().data
         train_mae += (MAE_train.item()*input_img.shape[0])
     
     # print the loss value
@@ -215,7 +201,7 @@ def train(dataloader, epoch, dir='.'):
 
 
 # EVALUATION function
-def evaluate(phase, dataloader, epoch, dir='.'):
+def evaluate(phase, dataloader, epoch):
     model.eval()
     valid_loss = 0
     valid_mae = 0.0
@@ -237,7 +223,7 @@ def evaluate(phase, dataloader, epoch, dir='.'):
 
             # evaluation metrics
             output_x = (output.squeeze() * torch.Tensor(np.tile(std_age_, output.squeeze().shape)).to(device)) + torch.Tensor(np.tile(mean_age_, output.squeeze().shape)).to(device)
-            MAE_valid = age_MAE(output_x.squeeze(), input_age.to(device))
+            MAE_valid = torch.abs(output_x.squeeze() - input_age.to(device)).sum().data
             valid_mae += (MAE_valid.item()*input_img.shape[0])
 
         # print the loss value
@@ -272,8 +258,8 @@ valid = {
 
 for epoch in range(args.epoch):
 
-    _, _ = train(dataloaders['train'], epoch, dir=directory)
-    loss_val, _, _ = evaluate('Valid', dataloaders['valid'], epoch, dir=directory)
+    _, _ = train(dataloaders['train'], epoch)
+    loss_val, _, _ = evaluate('Valid', dataloaders['valid'], epoch)
 
     if loss_val < valid['loss']:
         # Saving models
