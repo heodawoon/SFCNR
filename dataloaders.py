@@ -7,6 +7,8 @@ import torch
 from torch.utils.data import DataLoader
 from torch.utils.data import TensorDataset
 
+from utils import sagittal_flip, random_crop, match_size
+
 
 class UK_Dataset_train_loader(Dataset):
 
@@ -75,8 +77,7 @@ class UK_Dataset_valid_loader(Dataset):
         return valid_dataloader
 
 
-
-class JBUH(Dataset):
+class Finetune_dataset(Dataset):
     def __init__(self, patients_dir, crop_size, age_info, train=True):
         self.patients_dir = patients_dir
         self.age = age_info
@@ -155,3 +156,4 @@ class JBUH(Dataset):
 
     def normlize(self, x):
         return (x - x.min()) / (x.max() - x.min())
+
