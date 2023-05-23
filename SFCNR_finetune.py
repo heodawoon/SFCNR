@@ -22,6 +22,7 @@ import torch.backends.cudnn as cudnn
 
 from utils import writelog
 from SFCN_model import SFCNR
+from dataloaders import Finetune_dataset
 
 
 # Fix a random seed for reproduction
@@ -134,9 +135,9 @@ for fidx in range(len(inner_val_id)):
     val_age.append(inner_val_age[fidx])
 
 # Define Loaders
-trainloader = JBUH(tr_img_path, crop_size=(91, 109, 91), age_info=tr_age, train=True)
+trainloader = Finetune_dataset(tr_img_path, crop_size=(91, 109, 91), age_info=tr_age, train=True)
 tr_dataloader = DataLoader(trainloader, batch_size=args.batch_size, shuffle=True, drop_last=True)
-validloader = JBUH(val_img_path, crop_size=(91, 109, 91), age_info=val_age, train=False)
+validloader = Finetune_dataset(val_img_path, crop_size=(91, 109, 91), age_info=val_age, train=False)
 val_dataloader = DataLoader(validloader, batch_size=args.batch_size, shuffle=False, drop_last=False)
 
 dataloaders = {'train': tr_dataloader,
