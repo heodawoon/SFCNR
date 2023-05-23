@@ -63,10 +63,7 @@ f.close()
 
 writer = SummaryWriter(log_dir=logdir)
 
-# Total Data path (Training, validation(MAE / PAD)
-# train_csv = pd.read_csv("./UK_Biobank/first_visit_final_7590.csv")
-# train_npy = np.load("./UK_Biobank/first_visit_final_7590.npz", mmap_mode="r")['data']
-
+# Total Data path
 train_csv = pd.read_csv('./UK_Biobank/first_visit_final_7590.csv')
 train_npy = \
 np.load("./UK_Biobank/3D_image_npy/Train_7590_AvpFirst.npz", mmap_mode="r")['data']
@@ -143,8 +140,8 @@ def training(epoch, dataloader):
     writer.add_scalar('/Train/loss', (train_loss / len(dataloader)), global_step=epoch)
     writer.add_scalar('/Train/MAE', (train_mae / len(dataloader)), global_step=epoch)
 
+    
 def evaluation(epoch, phase, dataloader):
-
     # Validation
     model.eval()
     valid_loss = 0
@@ -181,7 +178,6 @@ def evaluation(epoch, phase, dataloader):
     writer.add_scalar('/' + phase + '/MAE', (valid_mae / len(dataloader)), global_step=epoch)
 
     return Valid_Loss, Valid_MAE
-
 
 
 min_loss = np.inf
