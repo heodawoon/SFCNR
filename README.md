@@ -1,7 +1,5 @@
 # Deep Learning-based Brain Age Prediction in Patients with Schizophrenia Spectrum Disorders
-
-This repository provides the PyTorch implementation of the utilized SFCNR framework for brain age prediction.\
-The code is based on the SFCN (Peng et al., 2021).
+This repository provides the PyTorch implementation of the utilized SFCNR framework for brain age prediction.
 
 
 ## Backbone Network
