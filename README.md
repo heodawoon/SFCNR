@@ -14,7 +14,7 @@ We utilized SFCN [1], the network proposed for brain age prediction, for a backb
 
 
 ## Data
-The data used for pretraining was sourced from the UK Biobank [2], which is available at https://www.ukbiobank.ac.uk/. Out of a total database comprising 49,123 T1 structural brain scans, we used the first-visit imaging datasets of healthy subjects. In addition, we randomly picked 230 subjects from each year between 48 and 80 to maintain an even age distribution across the sample. This approach resulted in an overall selection of 7,590 data. These data were subsequently divided into training, validation, and testing sets by 8:1:1 ratio.
+The data used for pre-training was sourced from the UK Biobank [2], which is available at https://www.ukbiobank.ac.uk/. Out of a total database comprising 49,123 T1 structural brain scans, we used the first-visit imaging datasets of healthy subjects. In addition, we randomly picked 230 subjects from each year between 48 and 80 to maintain an even age distribution across the sample. This approach resulted in an overall selection of 7,590 data. These data were subsequently divided into training, validation, and testing sets by 8:1:1 ratio.
 
 
 ## Usage
