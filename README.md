@@ -8,7 +8,7 @@ We utilized SFCN [1], the network proposed for brain age prediction, for a backb
 
 
 ## Overall Framework
-![image](https://github.com/heodawoon/SFCNR/image/OverallFramework_SFCNR.jpg?raw=true)
+![image](https://github.com/heodawoon/SFCNR/image/OverallFramework_SFCNR.jpg)
 
 
 ## Datasets
