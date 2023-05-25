@@ -18,7 +18,7 @@ The dataset utilized for the model's pre-training was sourced from the UK Bioban
 
 2. Fine-tuning
 The datasets utilized for the model's fine-tuning and validation processes were procured from multiple sources: Jeonbuk National University Hospital (JBUH), Korea University Anam Hospital (KUAH), and the Consortium for Reliability and Reproducibility (CoRR). The latter's dataset is accessible at [http://fcon_1000.projects.nitrc.org/indi/CoRR/html/index.html](http://fcon_1000.projects.nitrc.org/indi/CoRR/html/index.html).\
-From the CoRR database, the participants' demographic for the study was specifically selected from the Asian population, with an age range between 18 and 75 years. The dataset composition from the CoRR database is 56 subjects from Beijing Normal University, 100 subjects from the Institute of Psychology at the Chinese Academy of Sciences, 30 subjects from Jinling Hospital at Nanjing University, 70 subjects from Southwest University, and 22 subjects from Xuanwu Hospital, affiliated with Capital University of Medical Sciences.
+From the CoRR database, the participants' demographic for the study was specifically selected from the Asian population, with an age range between 18 and 75 years. The detailed dataset composition from the CoRR database is 56 subjects from Beijing Normal University, 100 subjects from the Institute of Psychology at the Chinese Academy of Sciences, 30 subjects from Jinling Hospital at Nanjing University, 70 subjects from Southwest University, and 22 subjects from Xuanwu Hospital, affiliated with Capital University of Medical Sciences.
 
 
 ## Usage
