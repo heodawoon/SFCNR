@@ -40,4 +40,4 @@ python ./SFCNR_finetune.py --gpu_id 0
 
 
 ## Acknowledgement
-The corresponding author thanks all the study participants, as well as his father for guidance. The study was supported by Korean Mental Health Technology R&D Project, Ministry of Health and Welfare, Republic of Korea (HL19C0015) and Korea Health Technology R&D Project through the Korea Health Industry Development Institute funded by the Ministry of Health and Welfare, Republic of Korea (HR18C0016).
+The study was supported by Korean Mental Health Technology R&D Project, Ministry of Health and Welfare, Republic of Korea (HL19C0015), Korea Health Technology R&D Project through the Korea Health Industry Development Institute funded by the Ministry of Health and Welfare, Republic of Korea (HR18C0016), and Institute of Information & communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (No. 2019-0-00079, Artificial Intelligence Graduate School Program (Korea University)).
